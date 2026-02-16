@@ -1,3 +1,6 @@
+from tabnanny import check
+
+
 class Television:
     __min_volume = 0
     __max_volume = 100
@@ -18,25 +21,36 @@ class Television:
     def is_on(self):
         return self.__is_on
 
-    def increase_volume(self):
+    def check_power(self):
         if not self.__is_on:
             raise Exception("TV is off")
+
+    def increase_volume(self):
+        self.check_power()
         if self.__volume < self.__max_volume:
             self.__volume += 1
 
     def decrease_volume(self):
-        if not self.__is_on:
-            raise Exception("TV is off")
+        self.check_power()
         if self.__volume > self.__min_volume:
             self.__volume -= 1
 
     def set_channel(self, channel):
-        if not self.__is_on:
-            raise Exception("TV is off")
+        self.check_power()
         if self.__min_channel <= channel <= self.__max_channel:
             self.__channel = channel
         else:
             raise ValueError("Invalid channel")
+
+    def change_channel_up(self):
+        self.check_power()
+        if self.__min_channel <= self.__channel < self.__max_channel:
+            self.__channel += 1
+
+    def change_channel_down(self):
+        self.check_power()
+        if self.__min_channel < self.__channel <= self.__max_channel:
+            self.__channel -= 1
 
     def get_volume(self):
         return self.__volume

@@ -78,5 +78,33 @@ class MyTestCase(unittest.TestCase):
         with self.assertRaises(Exception):
             self.tv.set_channel(10)
 
+    def test_channel_changes_up_by_one(self):
+        self.tv.turn_on()
+        self.assertEqual(self.tv.get_channel(), 1)
+        self.tv.change_channel_up()
+        self.assertEqual(self.tv.get_channel(), 2)
+
+    def test_channel_channel_down_by_one(self):
+        self.tv.turn_on()
+        self.assertEqual(self.tv.get_channel(), 1)
+        self.tv.set_channel(20)
+        self.assertEqual(self.tv.get_channel(), 20)
+        self.tv.change_channel_down()
+        self.assertEqual(self.tv.get_channel(), 19)
+
+    def test_channel_cannot_change_down_when_on_channel_one(self):
+        self.tv.turn_on()
+        self.assertEqual(self.tv.get_channel(), 1)
+        self.tv.change_channel_down()
+        self.assertEqual(self.tv.get_channel(), 1)
+
+    def test_channel_cannot_change_up_when_on_channel_hundred(self):
+        self.tv.turn_on()
+        self.assertEqual(self.tv.get_channel(), 1)
+        self.tv.set_channel(100)
+        self.assertEqual(self.tv.get_channel(), 100)
+        self.tv.change_channel_up()
+        self.assertEqual(self.tv.get_channel(), 100)
+
 if __name__ == '__main__':
     unittest.main()

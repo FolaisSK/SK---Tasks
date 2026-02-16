@@ -8,7 +8,7 @@ from studentManagementSystem.student_management_system import StudentManagementS
 class MyStudentManagementSystem(unittest.TestCase):
     def setUp(self):
         self.student = Student("Fola", "456")
-        self.course1 = Course("Queuing Theory", "ICE501")
+        self.course1 = Course("Queuing Theory", "ICE501", 3)
         self.university = StudentManagementSystem()
 
     def test_student_creation(self):
