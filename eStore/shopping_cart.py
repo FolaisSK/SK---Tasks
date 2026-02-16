@@ -1,2 +1,8 @@
+from eStore.items import Items
+
+from typing import List
+
+
 class ShoppingCart:
-    pass
+    def __init__(self):
+        self.items: List[Items] = []
