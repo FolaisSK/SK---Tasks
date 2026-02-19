@@ -5,4 +5,4 @@ from typing import List
 
 class ShoppingCart:
     def __init__(self):
-        self.items: List[Items] = []
+        self.items: list[Items] = []
