@@ -1,11 +1,14 @@
 from typing import List
 
+from models.course import Course
 from models.enums import UserRole
 from models.user import User
+from schemas.course_schema import CourseCreate
 from schemas.user_schema import UserCreate
 
 students: List[User] = []
 facilitators: List[User] = []
+courses: List[Course] = []
 
 async def create_student(student: UserCreate)->User:
     if student.role != UserRole.STUDENT:
@@ -36,3 +39,13 @@ async def get_students() -> List[User]:
 
 async def get_facilitators() -> List[User]:
     return facilitators
+
+async def create_course(course: CourseCreate)->Course:
+    new_id = len(courses)+1
+    new_course = Course(id=new_id,
+                        title= course.title,
+                        description= course.description,
+                        facilitator_name= course.facilitator_name
+                        )
+    courses.append(new_course)
+    return new_course
