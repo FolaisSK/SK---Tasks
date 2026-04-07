@@ -1,4 +1,5 @@
 from studentManagementSystem.course import Course
+from studentManagementSystem.student_management_system import StudentManagementSystem
 
 
 def validate_grade(grade: int):
@@ -17,8 +18,18 @@ def validated_offered_course(course: Course, courses):
 class Student:
     def __init__(self, name, student_id):
         self.__name = name
-        self.__student_id = student_id
+        self.__student_id = StudentManagementSystem.generate_student_id()
         self.__courses_grades = {}
+
+    @property
+    def name(self):
+        return self.__name
+
+    @name.setter
+    def name(self, name):
+        if name is None:
+            raise ValueError('Invalid name')
+        self.__name = name
 
     def get_name(self):
         return self.__name
