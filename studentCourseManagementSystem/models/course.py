@@ -5,4 +5,4 @@ class Course(BaseModel):
     id: int
     title: str
     description: str
-    facilitator_name: str
+    facilitator_id: str
