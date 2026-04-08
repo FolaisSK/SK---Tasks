@@ -1,7 +1,8 @@
 from typing import List
 
 from database.connection import facilitator_collection, student_collection, course_collection
-from exceptions.user_exceptions import UserNotFound
+from exceptions.custom_exceptions import UserNotFoundException, UserAlreadyExistsException, InvalidRoleException, \
+    CourseAlreadyExistsException, EmailAlreadyExistsException
 from models.course import Course
 from models.enums import UserRole
 from models.user import User
@@ -19,10 +20,10 @@ courses: List[Course] = []
 def create_student(student: UserCreate)->User:
     existing_student =  student_collection.find_one({"email": student.email})
     if existing_student:
-        raise Exception("Student already exists")
+        raise EmailAlreadyExistsException()
 
     if student.role != UserRole.STUDENT:
-        raise Exception("Invalid role not allowed")
+        raise InvalidRoleException()
     new_id = len(students)+1
     new_student =  User(id=new_id,
                              name=student.name,
@@ -36,10 +37,10 @@ def create_student(student: UserCreate)->User:
 def create_facilitator(facilitator: UserCreate)->User:
     existing_user =  facilitator_collection.find_one({"email": facilitator.email})
     if existing_user:
-        raise Exception("Facilitator already exists")
+        raise EmailAlreadyExistsException()
 
     if facilitator.role != UserRole.FACILITATOR:
-        raise Exception("Invalid role not allowed")
+        raise InvalidRoleException()
     new_id = len(facilitators)+1
     new_facilitator =  User(id=new_id,
                                  name=facilitator.name,
@@ -60,7 +61,7 @@ def get_facilitators() -> List[User]:
 def create_course(course: CourseCreate)->Course:
     existing_course =  course_collection.find_one({"title": course.title})
     if existing_course:
-        raise Exception("Course already exists")
+        raise CourseAlreadyExistsException()
 
     new_id = len(courses)+1
     new_course = Course(id=new_id,
@@ -76,7 +77,11 @@ def create_course(course: CourseCreate)->Course:
 def find_facilitator(user_id):
     facilitator = get_facilitator_by_id(user_id)
     if facilitator is None:
-        raise UserNotFound("Facilitator not found")
+        raise UserNotFoundException()
+    return facilitator
 
 def find_student(user_id):
-    return get_student_by_id(user_id)
+    student = get_student_by_id(user_id)
+    if student is None:
+        raise UserNotFoundException()
+    return student
