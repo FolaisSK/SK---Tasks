@@ -1,3 +1,4 @@
+from app.models.category import Category
 from app.models.expense import Expense
 from app.schemas.expense_schema import CreateExpenseSchema, UpdateExpenseSchema
 from main import db
@@ -6,10 +7,10 @@ from main import db
 def add_expense(request : CreateExpenseSchema):
     expense = Expense(
         amount = request.amount,
-        category = request.category,
+        category = Category(request.category),
         description = request.description,
         transaction_date = request.transaction_date,
-        user_id = request.user_id,
+        user_id = request.user_id
     )
     db.session.add(expense)
     db.session.commit()
@@ -22,7 +23,6 @@ def update_expense(request : UpdateExpenseSchema):
     expense.description = request.description
     expense.transaction_date = request.transaction_date
 
-    db.session.add(expense)
     db.session.commit()
     return expense
 

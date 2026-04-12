@@ -10,10 +10,13 @@ def register(request : CreateUserSchema):
     hashed_password = generate_password_hash(request.password)
 
     user = User.query.filter_by(email=request.email).first()
+    if user:
+        raise Exception('User already exists')
+
     new_user = User(
         name=request.name,
         email=request.email,
-        phoneNumber=request.phone,
+        phoneNumber=request.phoneNumber,
         password=hashed_password
     )
     db.session.add(new_user)

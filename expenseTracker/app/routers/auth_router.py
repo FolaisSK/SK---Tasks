@@ -14,7 +14,14 @@ def register():
         validated_data = schema.load(data)
         user = auth_service.register(validated_data)
 
-        return jsonify({'message': 'User created successfully', 'user': user.dict()}), 201
+        return jsonify({'message': 'User created successfully',
+                        'user': {
+                            'id': user.id,
+                            'name': user.name,
+                            'email': user.email,
+                            'phone_number': user.phoneNumber
+                        }
+                        }), 201
 
     except ValidationError as err:
         return jsonify({'message': err.messages}, 400)
@@ -32,7 +39,7 @@ def login():
 
         if not result:
             return jsonify({'message': 'Login failed'}), 401
-        return jsonify({'message': 'User logged in', 'token': result.dict()}), 200
+        return jsonify({'message': 'User logged in', 'token': result}), 200
 
     except ValidationError as err:
         return jsonify({'message': err.messages}, 400)
