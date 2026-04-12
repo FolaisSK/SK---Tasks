@@ -2,6 +2,7 @@ import pymongo
 from bson import ObjectId
 
 from database.connection import enrollment_collection
+from exceptions.custom_exceptions import EnrollmentNotFoundException
 from models.enrollment import Enrollment
 from models.enums import Grades
 
@@ -18,6 +19,8 @@ def get_enrollment_by_id(enrollment_id):
 
 def get_enrollment_by_student_id_and_course_id(student_id: str, course_id: str):
     enrollment = enrollment_collection.find_one({'student_id': student_id, 'course_id': course_id})
+    if enrollment is None:
+        raise EnrollmentNotFoundException()
     enrollment["id"] = str(enrollment["_id"])
     del enrollment["_id"]
     if enrollment is not None:

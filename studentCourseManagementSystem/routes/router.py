@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 
+from exceptions.custom_exceptions import UserNotFoundException
 from models.enrollment import Enrollment
 from schemas.course_schema import CourseCreate
 from schemas.enrollment_schema import AssignGradeSchema
@@ -10,7 +11,10 @@ router = APIRouter(prefix="/app", tags=["Student Course Management System"])
 
 @router.post("/add-facilitator")
 async def create_facilitator(facilitator : UserCreate):
-    return  user_service.create_facilitator(facilitator)
+    try:
+        return  user_service.create_facilitator(facilitator)
+    except Exception as e:
+        return {"error": str(e)}
 
 @router.get("/facilitators/all")
 async def get_facilitators():
@@ -38,7 +42,10 @@ async def view_student(user_id : str):
 
 @router.post("/enroll-student")
 async def enroll_student(course_id : str, student_id : str):
-    return enrollment_service.enroll_student(course_id, student_id)
+    try:
+        return enrollment_service.enroll_student(course_id, student_id)
+    except UserNotFoundException as e:
+        return {"error": str(e), "message": str(e)}
 
 @router.get("/view-enrolled-courses")
 async def view_enrolled_courses(student_id : str):

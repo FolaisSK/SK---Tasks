@@ -3,6 +3,7 @@ import pymongo
 from bson import ObjectId
 
 from database.connection import student_collection, facilitator_collection
+from exceptions.custom_exceptions import UserNotFoundException
 from models.enums import UserRole
 from models.user import User
 
@@ -22,6 +23,8 @@ def get_facilitator_by_id(user_id: str):
 
 def get_student_by_id(user_id: str):
     student = student_collection.find_one({'_id': ObjectId(user_id)})
+    if student is None:
+        raise UserNotFoundException()
     del student["_id"]
     if student is not None:
         return student
