@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager
 from app.routers.auth_router import auth_bp
 from app.routers.expense_tracker_router import expense_bp
+from app.extensions import db
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -14,11 +15,11 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JWT_SECRET_KEY'] = 'super-secret'
 
 jwt = JWTManager(app)
-db = SQLAlchemy(app)
 
 app.register_blueprint(auth_bp, url_prefix="/auth")
 app.register_blueprint(expense_bp, url_prefix="/expenses")
 
+db.init_app(app)
 with app.app_context():
     db.create_all()
 
