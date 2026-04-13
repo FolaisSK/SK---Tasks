@@ -1,6 +1,5 @@
 from flask import Flask
 import os
-from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager
 from app.routers.auth_router import auth_bp
 from app.routers.expense_tracker_router import expense_bp

@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from marshmallow import ValidationError
 
-from app.schemas.expense_schema import CreateExpenseSchema, FilterByDateRangeSchema
+from app.schemas.expense_schema import CreateExpenseSchema, FilterByDateRangeSchema, UpdateExpenseSchema
 from app.services import expense_tracker_service
 
 expense_bp = Blueprint('expenses', __name__)
@@ -101,5 +101,40 @@ def view_expenses_by_date_range():
                 for exp in expenses
             ]
         })
+    except Exception as e:
+        return jsonify({'message': str(e)}), 400
+
+@expense_bp.route('/update', methods=['POST'])
+@jwt_required()
+def update_expense():
+    try:
+        data = request.get_json()
+        schema = UpdateExpenseSchema()
+        user_id = get_jwt_identity()
+        data.update({'user_id': user_id})
+        validated_data = schema.load(data)
+
+        updated_expense = expense_tracker_service.update_expense(validated_data)
+        return jsonify({'message': "Expense Updated Successfully!",
+                        'data':{
+                            'id': updated_expense.id,
+                            'amount': updated_expense.amount,
+                            'category': updated_expense.category.value,
+                            'description': updated_expense.description,
+                            'transaction_date': updated_expense.transaction_date
+                        }
+                        }), 201
+    except ValidationError as err:
+        return jsonify({'message': err.messages}, 400)
+    except Exception as e:
+        return jsonify({'message': str(e)}), 400
+
+@expense_bp.route('/delete/<int:expense_id>', methods=['DELETE'])
+@jwt_required()
+def delete_expense(expense_id):
+    try:
+        user_id = get_jwt_identity()
+        result = expense_tracker_service.delete_expense(expense_id=expense_id, user_id=user_id)
+        return jsonify({'message': result,}), 200
     except Exception as e:
         return jsonify({'message': str(e)}), 400

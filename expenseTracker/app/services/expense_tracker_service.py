@@ -28,7 +28,8 @@ def update_expense(request : UpdateExpenseSchema):
     if request['category'] is None:
         raise Exception("Invalid category")
 
-    expense = Expense.query.get_or_404(request['expense_id'])
+    # expense = Expense.query.get_or_404(request['expense_id'])
+    expense = expense_repository.get_expenses_by_id(expense_id=request['expense_id'], user_id=request['user_id'])
 
     expense.amount = request['amount']
     expense.category = request['category']
@@ -41,8 +42,9 @@ def update_expense(request : UpdateExpenseSchema):
 def view_all_expenses(user_id):
     return expense_repository.get_all_expenses_by_user(user_id)
 
-def delete_expense(expense_id):
-    expense = Expense.query.get_or_404(expense_id)
+def delete_expense(expense_id, user_id):
+    # expense = Expense.query.get_or_404(expense_id)
+    expense = expense_repository.get_expenses_by_id(expense_id=expense_id, user_id=user_id)
     expense_repository.delete(expense)
     return "Expense deleted successfully!!!"
 

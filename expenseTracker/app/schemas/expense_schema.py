@@ -14,6 +14,7 @@ class UpdateExpenseSchema(Schema):
     category = fields.String(required=True)
     description = fields.String(required=True)
     transaction_date = fields.DateTime(required=True)
+    user_id = fields.Integer(required=True)
 
 class FilterByCategorySchema(Schema):
     category = fields.String(required=True)
