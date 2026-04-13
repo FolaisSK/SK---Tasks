@@ -78,7 +78,7 @@ def view_expenses_by_category(category):
         return jsonify({'message': str(e)}), 400
 
 
-@expense_bp.route('filter/date-range', methods=['GET'])
+@expense_bp.route('/filter/date-range', methods=['POST'])
 @jwt_required()
 def view_expenses_by_date_range():
     try:
@@ -88,6 +88,10 @@ def view_expenses_by_date_range():
         data.update({'user_id': user_id})
         validated_data = schema.load(data)
         expenses = expense_tracker_service.filter_by_date_range(validated_data)
+
+        print(validated_data)
+        print(type(validated_data["start_date"]))
+        print(type(validated_data["end_date"]))
 
         return jsonify({
             'expenses': [
@@ -104,7 +108,7 @@ def view_expenses_by_date_range():
     except Exception as e:
         return jsonify({'message': str(e)}), 400
 
-@expense_bp.route('/update', methods=['POST'])
+@expense_bp.route('/update', methods=['PATCH'])
 @jwt_required()
 def update_expense():
     try:
@@ -138,3 +142,4 @@ def delete_expense(expense_id):
         return jsonify({'message': result,}), 200
     except Exception as e:
         return jsonify({'message': str(e)}), 400
+

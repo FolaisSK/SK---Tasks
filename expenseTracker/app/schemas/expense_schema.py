@@ -21,6 +21,6 @@ class FilterByCategorySchema(Schema):
     user_id = fields.Integer(required=True)
 
 class FilterByDateRangeSchema(Schema):
-    start_date = fields.DateTime(required=True)
-    end_date = fields.DateTime(required=True)
+    start_date = fields.Date(required=True)
+    end_date = fields.Date(required=True)
     user_id = fields.Integer(required=True)
