@@ -1,5 +1,7 @@
 from datetime import date
 
+from app.exceptions.custom_exceptions import InvalidAmountException, InvalidExpenseCategoryException, \
+    ExpenseDoesNotExistException
 from app.models.category import Category
 from app.models.expense import Expense
 from app.repositories import expense_repository
@@ -10,9 +12,9 @@ from app.extensions import db
 
 def add_expense(request : CreateExpenseSchema):
     if request['amount'] <= 0:
-        raise Exception("Invalid amount")
+        raise InvalidAmountException()
     if request['category'] is None:
-        raise Exception("Invalid category")
+        raise InvalidExpenseCategoryException()
 
     expense = Expense(
         amount = request['amount'],
@@ -26,13 +28,13 @@ def add_expense(request : CreateExpenseSchema):
 
 def update_expense(request : UpdateExpenseSchema):
     if request['amount'] <= 0:
-        raise Exception("Invalid amount")
+        raise InvalidAmountException()
     if request['category'] is None:
-        raise Exception("Invalid category")
+        raise InvalidExpenseCategoryException()
 
     expense = expense_repository.get_expenses_by_id(expense_id=request['expense_id'], user_id=request['user_id'])
     if expense is None:
-        raise Exception("Invalid expense")
+        raise ExpenseDoesNotExistException()
 
     expense.amount = request['amount']
     expense.category = request['category']
@@ -48,7 +50,7 @@ def view_all_expenses(user_id):
 def delete_expense(expense_id, user_id):
     expense = expense_repository.get_expenses_by_id(expense_id=expense_id, user_id=user_id)
     if expense is None:
-        raise Exception("Invalid expense")
+        raise ExpenseDoesNotExistException()
     expense_repository.delete(expense)
     return "Expense deleted successfully!!!"
 

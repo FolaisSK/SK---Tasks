@@ -1,6 +1,7 @@
 from flask_jwt_extended import create_access_token
 from werkzeug.security import generate_password_hash, check_password_hash
 
+from app.exceptions.custom_exceptions import InvalidEmailOrPasswordException, UserAlreadyExistsException
 from app.models.user import User
 from app.repositories import user_repository
 from app.schemas.user_schema import CreateUserSchema, LoginUserSchema, LoginResponseSchema
@@ -11,7 +12,7 @@ def register(request : CreateUserSchema):
 
     user = user_repository.get_user_by_email(email=request['email'])
     if user:
-        raise Exception('User already exists')
+        raise UserAlreadyExistsException()
 
     new_user = User(
         name=request['name'],
@@ -25,9 +26,10 @@ def register(request : CreateUserSchema):
 def login(request : LoginUserSchema):
     user = user_repository.get_user_by_email(email=request['email'])
     if not user:
-        return False
+        raise InvalidEmailOrPasswordException()
     if not check_password_hash(pwhash=user.password, password=request['password']):
-        return None
+        raise InvalidEmailOrPasswordException()
+
     token = create_access_token(identity=str(user.id))
 
     return token
