@@ -1,3 +1,5 @@
+from datetime import date
+
 from app.models.category import Category
 from app.models.expense import Expense
 from app.repositories import expense_repository
@@ -29,6 +31,8 @@ def update_expense(request : UpdateExpenseSchema):
         raise Exception("Invalid category")
 
     expense = expense_repository.get_expenses_by_id(expense_id=request['expense_id'], user_id=request['user_id'])
+    if expense is None:
+        raise Exception("Invalid expense")
 
     expense.amount = request['amount']
     expense.category = request['category']
@@ -43,6 +47,8 @@ def view_all_expenses(user_id):
 
 def delete_expense(expense_id, user_id):
     expense = expense_repository.get_expenses_by_id(expense_id=expense_id, user_id=user_id)
+    if expense is None:
+        raise Exception("Invalid expense")
     expense_repository.delete(expense)
     return "Expense deleted successfully!!!"
 
@@ -51,4 +57,16 @@ def filter_by_category(user_id, category):
 
 def filter_by_date_range(request : FilterByDateRangeSchema):
     return expense_repository.get_expenses_by_date_range(user_id=request['user_id'], start_date=request['start_date'],end_date=request['end_date'])
+
+def view_monthly_summary(user_id):
+    current_date = date.today()
+    start_date = current_date.replace(day=1)
+
+    expenses = expense_repository.get_expenses_by_date_range(user_id=user_id, start_date=start_date, end_date=current_date)
+
+    total = 0
+    for expense in expenses:
+        total += expense.amount
+
+    return total
 

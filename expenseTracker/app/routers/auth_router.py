@@ -24,7 +24,7 @@ def register():
                         }), 201
 
     except ValidationError as err:
-        return jsonify({'message': err.messages}, 400)
+        return jsonify({'message': err.messages}), 400
     except Exception as e:
         return jsonify({'message': str(e)}), 400
 
@@ -38,10 +38,10 @@ def login():
         result = auth_service.login(validated_data)
 
         if not result:
-            return jsonify({'message': 'Login failed'}), 401
+            return jsonify({'message': 'Invalid Email or Password'}), 401
         return jsonify({'message': 'User logged in', 'token': result}), 200
 
     except ValidationError as err:
-        return jsonify({'message': err.messages}, 400)
+        return jsonify({'message': err.messages}), 400
     except Exception as e:
         return jsonify({'message': str(e)}), 400

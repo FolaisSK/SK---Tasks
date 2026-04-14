@@ -143,3 +143,15 @@ def delete_expense(expense_id):
     except Exception as e:
         return jsonify({'message': str(e)}), 400
 
+
+@expense_bp.route('/monthly_summary', methods=['GET'])
+@jwt_required()
+def monthly_summary():
+    try:
+        user_id = get_jwt_identity()
+        total_expense = expense_tracker_service.view_monthly_summary(user_id=user_id)
+        return jsonify({'message': "Current Monthly Summary",
+                        'total expense': total_expense
+                        }), 200
+    except Exception as e:
+        return jsonify({'message': str(e)}), 400
